@@ -5,7 +5,7 @@
  * @link https://wordpress.org/plugins/onesignal-free-web-push-notifications/
  *
  * @since 1.6
- * 
+ *
  * @function	superpwa_onesignal_add_gcm_sender_id()			Add gcm_sender_id to SuperPWA manifest
  * @function	superpwa_onesignal_sw_filename()				Change Service Worker filename to OneSignalSDKWorker.js.php
  * @function 	superpwa_onesignal_sw() 						Import OneSignal service worker in SuperPWA
@@ -166,52 +166,55 @@ add_action( 'deactivate_onesignal-free-web-push-notifications/onesignal.php', 's
 
 /**
  * Admin notices for OneSignal compatibility
- * 
+ *
  * One Single installs, warn users to add SuperPWA manifest as custom manifest in OneSignal settings.
- * One multisites, warn users that SuperPWA and OneSignal cannot work together. 
- * 
+ * One multisites, warn users that SuperPWA and OneSignal cannot work together.
+ *
  * @since 1.8.1
  */
 function superpwa_onesignal_admin_notices() {
-	
+
 	// Notices only for admins.
 	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
 	}
-	
+
 	// Incompatibility notice for Multisites
 	if ( is_multisite() ) {
-		echo '<div class="notice notice-warning"><p>' . 
-		sprintf( 
-			__( '<strong>SuperPWA</strong> is not compatible with OneSignal on multisites yet. Disable one of these plugins until the compatibility is available.<br>Please refer to the <a href="%s" target="_blank">OneSignal integration documentation</a> for more info. ', 'super-progressive-web-apps' ), 
+		echo '<div class="notice notice-warning"><p>' .
+		sprintf(
+			__( '<strong>SuperPWA</strong> is not compatible with OneSignal on multisites yet. Disable one of these plugins until the compatibility is available.<br>Please refer to the <a href="%s" target="_blank">OneSignal integration documentation</a> for more info. ', 'super-progressive-web-apps' ),
 			'https://superpwa.com/doc/setup-onesignal-with-superpwa/?utm_source=superpwa-plugin&utm_medium=onesignal-multisite-admin-notice#multisites'
 		) . '</p></div>';
-		
-		// Filter PWA status since PWA is not ready yet. 
+
+		// Filter PWA status since PWA is not ready yet.
 		add_filter( 'superpwa_is_pwa_ready', '__return_false' );
-		
+
 		return;
 	}
-	
+
+	// @todo Return temporarily here since the manifest file is created by the SW API Prototype.
+	return;
+
 	// Get OneSignal settings.
 	$onesignal_wp_settings = get_option( 'OneSignalWPSetting' );
-	
+
 	// Show notice if OneSignal custom manifest is disabled or if the custom manifest is not the SuperPWA manifest.
-	if ( 
-		! isset( $onesignal_wp_settings['use_custom_manifest'] ) 			|| 
+	if (
+		! isset( $onesignal_wp_settings['use_custom_manifest'] ) 			||
 		! ( (int) $onesignal_wp_settings['use_custom_manifest'] === 1 )		||
-		! isset( $onesignal_wp_settings['custom_manifest_url'] ) 			|| 
+		! isset( $onesignal_wp_settings['custom_manifest_url'] ) 			||
 		! ( strcasecmp( trim( $onesignal_wp_settings['custom_manifest_url'] ), superpwa_manifest( 'src' ) ) === 0  )
 	) {
-		echo '<div class="notice notice-warning"><p>' . 
-		sprintf( 
-			__( '<strong>Action Required to integrate SuperPWA with OneSignal:</strong><br>1. Go to <a href="%s" target="_blank">OneSignal Configuration > Scroll down to Advanced Settings &rarr;</a><br>2. Enable <strong>Use my own manifest.json</strong><br>3. Set <code>%s</code>as <strong>Custom manifest.json URL</strong> and Save Settings.<br>Please refer the <a href="%s" target="_blank">OneSignal integration documentation</a> for more info. ', 'super-progressive-web-apps' ), 
-			admin_url( 'admin.php?page=onesignal-push#configuration' ), 
+		echo '<div class="notice notice-warning"><p>' .
+		sprintf(
+			__( '<strong>Action Required to integrate SuperPWA with OneSignal:</strong><br>1. Go to <a href="%s" target="_blank">OneSignal Configuration > Scroll down to Advanced Settings &rarr;</a><br>2. Enable <strong>Use my own manifest.json</strong><br>3. Set <code>%s</code>as <strong>Custom manifest.json URL</strong> and Save Settings.<br>Please refer the <a href="%s" target="_blank">OneSignal integration documentation</a> for more info. ', 'super-progressive-web-apps' ),
+			admin_url( 'admin.php?page=onesignal-push#configuration' ),
 			superpwa_manifest( 'src' ),
 			'https://superpwa.com/doc/setup-onesignal-with-superpwa/?utm_source=superpwa-plugin&utm_medium=onesignal-admin-notice'
 		) . '</p></div>';
-		
-		// Filter PWA status since PWA is not ready yet. 
+
+		// Filter PWA status since PWA is not ready yet.
 		add_filter( 'superpwa_is_pwa_ready', '__return_false' );
 	}
 }
