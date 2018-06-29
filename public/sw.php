@@ -200,15 +200,31 @@ function checkNeverCacheList(url) {
 }
 
 /**
- * Register service worker
+ * Register service worker.
  */
 function superpwa_register_sw() {
 
-	if ( function_exists( 'wp_register_service_worker' ) ) {
+	if ( ! class_exists( 'OneSignal' ) && function_exists( 'wp_register_service_worker' ) ) {
 		wp_register_service_worker( 'superpwa-sw', superpwa_sw( 'src' ) );
 	}
 }
 add_action( 'plugins_loaded', 'superpwa_register_sw' );
+
+/**
+ * Register SW separately in case of OneSignal.
+ */
+function superpwa_register_onesignal_sw() {
+
+	// If OneSignal is installed and active.
+	if ( class_exists( 'OneSignal' ) ) {
+		wp_enqueue_script( 'superpwa-register-sw', SUPERPWA_PATH_SRC . 'public/js/register-sw.js', array(), null, true );
+		wp_localize_script( 'superpwa-register-sw', 'superpwa_sw', array(
+				'url' => superpwa_sw( 'src' ),
+			)
+		);
+	}
+}
+add_action( 'wp_enqueue_scripts', 'superpwa_register_onesignal_sw' );
 
 /**
  * Delete Service Worker
