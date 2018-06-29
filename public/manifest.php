@@ -68,19 +68,22 @@ function superpwa_manifest( $arg = 'src' ) {
  * @since 1.8 Removed gcm_sender_id and introduced filter superpwa_manifest. gcm_sender_id is added in /3rd-party/onesignal.php
  */
 function superpwa_generate_manifest() {
-	
+
+	// @todo Temporarily removed manifest generation since SW API Prototype already generates the manifest.
+	return true;
+
 	// Get Settings
 	$settings = superpwa_get_settings();
-	
+
 	$manifest 						= array();
 	$manifest['name']				= $settings['app_name'];
 	$manifest['short_name']			= $settings['app_short_name'];
-	
+
 	// Description
 	if ( isset( $settings['description'] ) && ! empty( $settings['description'] ) ) {
 		$manifest['description'] 	= $settings['description'];
 	}
-	
+
 	$manifest['icons']				= superpwa_get_pwa_icons();
 	$manifest['background_color']	= $settings['background_color'];
 	$manifest['theme_color']		= $settings['theme_color'];
