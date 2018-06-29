@@ -44,35 +44,35 @@ if ( class_exists( 'OneSignal' ) ) {
  * OneSignal's gcm_sender_id is 482941778795
  *
  * @param (array) $manifest Array with the manifest entries passed via the superpwa_manifest filter.
- * 
+ *
  * @return (array) Array appended with the gcm_sender_id of OneSignal
- * 
+ *
  * @since 1.8
  */
 function superpwa_onesignal_add_gcm_sender_id( $manifest ) {
-	
+
 	$manifest['gcm_sender_id'] = '482941778795';
-	
+
 	return $manifest;
 }
 
 /**
  * Change Service Worker filename to OneSignalSDKWorker.js.php
- * 
+ *
  * OneSignalSDKWorker.js.php is the name of the service worker of OneSignal.
- * Since only one service worker is allowed in a given scope, OneSignal unregisters all other service workers and registers theirs. 
- * Having the same name prevents OneSignal from unregistering our service worker. 
- * 
+ * Since only one service worker is allowed in a given scope, OneSignal unregisters all other service workers and registers theirs.
+ * Having the same name prevents OneSignal from unregistering our service worker.
+ *
  * @link https://documentation.onesignal.com/docs/web-push-setup-faq
- * 
+ *
  * @param (string) $sw_filename Filename of SuperPWA service worker passed via superpwa_sw_filename filter.
- * 
+ *
  * @return (string) Service worker filename changed to OneSignalSDKWorker.js.php
- * 
+ *
  * @since 1.8
  */
 function superpwa_onesignal_sw_filename( $sw_filename ) {
-	return 'OneSignalSDKWorker.js.php';
+	return 'OneSignalSDKWorker.js';
 }
 
 /**
@@ -86,11 +86,7 @@ function superpwa_onesignal_sw_filename( $sw_filename ) {
  */
 function superpwa_onesignal_sw( $sw ) {
 
-	$onesignal  = '<?php' . PHP_EOL;
-	$onesignal .= 'header( "Content-Type: application/javascript" );' . PHP_EOL;
-	$onesignal .= 'echo "importScripts( \'' . superpwa_httpsify( plugin_dir_url( 'onesignal-free-web-push-notifications/onesignal.php' ) ) . 'sdk_files/OneSignalSDKWorker.js.php\' );";' . PHP_EOL;
-	$onesignal .= '?>' . PHP_EOL . PHP_EOL;
-
+	$onesignal = "importScripts( '" . superpwa_httpsify( plugin_dir_url( 'onesignal-free-web-push-notifications/onesignal.php' ) ) . "sdk_files/OneSignalSDKWorker.js.php' );";
 	return $onesignal . $sw;
 }
 
